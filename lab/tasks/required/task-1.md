@@ -37,14 +37,16 @@ The database starts empty. We can get anonymized data on task completions in Aut
 
 1. Create a `Lab Task` issue titled:
   ```
-  [Task] Build the Data Pipeline`.
+  [Task] Build the Data Pipeline
   ```
 
 2. Create a task branch from `main` and switch to it.
 
-   Suggested branch name format: `task/<issue-number>-<short-title>`.
-   Example: `task/42-build-data-pipeline`.
-
+   Suggested branch name format (replace issue number):
+   ```
+   task/<issue-number>-build-data-pipeline
+   ```
+   
    Why this format:
    - The issue number makes branch-to-issue mapping immediate.
    - The short title makes branch purpose clear in PR lists and `Git` history.
