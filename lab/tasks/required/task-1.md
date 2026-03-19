@@ -30,27 +30,7 @@ This prints the bot's response to stdout and exits — no Telegram connection ne
 
 ## Prioritized requirements
 
-Give these to your coding agent as context:
-
-**P0 — Must have (Tasks 1–2):**
-- Testable handler layer — handlers callable without Telegram
-- CLI test mode: `python bot/bot.py --test "/command"` prints response to stdout
-- `/start` — welcome message
-- `/help` — lists available commands
-- `/health` — calls backend `GET /items/`, reports status
-- `/labs` — lists available labs from `GET /items/`
-- `/scores <lab>` — shows per-task pass rates from `GET /analytics/pass-rates?lab=`
-
-**P1 — Should have (Task 3):**
-- Natural language intent routing — plain text messages interpreted by LLM
-- All backend endpoints wrapped as LLM tools (9 tools)
-- Inline keyboard buttons for common commands
-- Graceful error handling
-
-**P2 — Nice to have:**
-- Multi-step reasoning (chaining API calls)
-- Response caching
-- Conversation context
+See the [requirements section](../../README.md#requirements) in the README for the full prioritized list (P0–P3). Give these to your coding agent when creating the plan — it needs to understand the full scope across all tasks, not just Task 1.
 
 ## Test mode specification
 
