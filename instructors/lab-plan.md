@@ -313,9 +313,14 @@ agent is embedded inside a user-facing product.
 | t3-eval-learners | `"how many students are enrolled"` | non-empty, contains a number | Unseen — different tool |
 | t3-eval-greeting | `"hello"` | non-empty, no `Traceback` | Unseen — non-data query |
 
-> Eval checks run with the student's own `.env.bot.secret` on their VM
-> (real LLM key + real backend). If the LLM key is missing or expired,
-> checks fail — student's responsibility to maintain working LLM access.
+> **How LLM eval works:** The autochecker SSHes to the student's VM and
+> runs `cd ~/se-toolkit-lab-7/bot && uv run bot.py --test "<query>"`.
+> The bot reads `.env.bot.secret` from the student's VM and calls the
+> student's own Qwen proxy at `localhost:42005`. The autochecker does NOT
+> inject its own LLM key — it uses the student's infrastructure end-to-end.
+> If the student's LLM key is missing or their Qwen proxy is down, the
+> check fails. This is by design: maintaining working LLM access is part
+> of the lab. The `setup-llm` check catches this early.
 
 ### Task 4 — Containerize and Document
 
