@@ -71,13 +71,13 @@ Docs:
    [run in the `VS Code Terminal`](./vs-code.md#run-a-command-in-the-vs-code-terminal):
 
    ```terminal
-   git clone <repo-url> <repo-path>
+   git clone <repo-url> <path>
    ```
 
    Replace the placeholders:
 
    - [`<repo-url>`](./github.md#repo-url)
-   - `<repo-path>` with the path where you want to clone the repository
+   - [`<path>`](./file-system.md#path-placeholder) with the path where you want to clone the repository
 
    Example:
 
