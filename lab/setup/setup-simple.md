@@ -19,25 +19,8 @@
 
 ## 1. Required steps
 
-> [!NOTE]
-> This lab builds on the same tools and setup from previous labs.
-> If you completed Labs 4–7, most tools are already installed.
-> The main changes are: a new repo, cleaning up Lab 7, and deploying the base system.
-
-> [!IMPORTANT]
-> In this lab, you start with only the **base LMS system** (backend, database, dashboard). You will add the AI agent, chat clients, and observability tools **during the tasks** — not during setup. The setup just gets the foundation running.
-
 > [!IMPORTANT]
 > Do the whole lab on your **VM**. Open the repo over `VS Code` Remote-SSH and run every command there. When this guide says `localhost`, it means the VM itself or a forwarded port from that VM. Do not install or run `nanobot` on your main machine.
-
-> [!NOTE]
-> This lab needs your university email and GitHub alias in the Autochecker bot <https://t.me/auchebot>. If you haven't registered, do so now. If you want to change something, contact your TA or try `/reset` in the autochecker bot.
-
-> [!TIP]
-> In the instructions below, values you need to replace are marked like this: **`YOUR_VALUE`**. Replace the entire placeholder (including the `<` and `>` if present) with your actual value.
-
-> [!TIP]
-> First ask your [coding agent](#110-coding-agent), then ask the TA.
 
 ### 1.1. Set up your fork
 
@@ -64,9 +47,13 @@ We refer to your fork as `fork` and to the original repo as `upstream`.
 
 1. [Protect a branch](../../wiki/github.md#protect-a-branch).
 
-### 1.2. Clone your fork and set up the environment
+### 1.2. SSH into your VM and set up the environment there
 
-1. [Connect to your VM](../../wiki/vm-access.md#connect-to-the-vm-as-the-user-user-local) and clone your fork there:
+1. [Connect to your VM](../../wiki/vm-access.md#connect-to-the-vm-as-the-user-user-local).
+
+   You will do the whole lab on VM. All the steps below and the tasks will be done on VM.
+
+2. Clone your fork there:
 
    ```terminal
    git clone --recurse-submodules https://github.com/YOUR_GITHUB_USERNAME/se-toolkit-lab-8
@@ -77,11 +64,10 @@ We refer to your fork as `fork` and to the original repo as `upstream`.
    > [!NOTE]
    > The `--recurse-submodules` flag clones the Qwen Code API [submodule](../../wiki/git.md#submodule) included in the repository.
 
-2. Open the forked repo in `VS Code` through `Remote-SSH`.
-
-3. Go to `VS Code Terminal`, [check that the current directory is `se-toolkit-lab-8`](../../wiki/shell.md#check-the-current-directory-is-directory-name), and install `Python` dependencies:
+3. Go into the repository and install `Python` dependencies:
 
    ```terminal
+   cd se-toolkit-lab-8
    uv sync --dev
    ```
 
@@ -105,6 +91,9 @@ We refer to your fork as `fork` and to the original repo as `upstream`.
 
    > [!IMPORTANT]
    > The credentials must match your autochecker bot registration.
+   >
+   > If you haven't registered in the autochecker bot yet, do it now at <https://t.me/auchebot>.
+   > If you need to change existing data, ask your TA or try `/reset` in the bot.
 
 6. Set `LMS_API_KEY` — this is the **backend API key** that protects your LMS endpoints (used for `Authorization: Bearer` in Swagger and the React dashboard). It is **not** the Nanobot login password and it is **not** the LLM key.
 
@@ -126,7 +115,7 @@ We refer to your fork as `fork` and to the original repo as `upstream`.
    NANOBOT_ACCESS_KEY=set-your-own-private-password
    ```
 
-### 1.3. Stop Lab 7 services on your VM
+### 1.3. Stop Lab 7 services on your VM to free the ports
 
 > [!IMPORTANT]
 > Labs 7 and 8 use the same ports (42001–42005). You **must** stop Lab 7 containers before starting Lab 8.
@@ -141,21 +130,19 @@ docker compose --env-file .env.docker.secret down
 
 ### 1.4. Start the services on your VM
 
-1. Make sure the [Docker daemon](../../wiki/docker.md#start-docker) is running on your VM.
-
-2. Start the services in the background:
+1. Start the services in the background:
 
    ```terminal
    docker compose --env-file .env.docker.secret up --build -d
    ```
 
-3. Check that the containers are running:
+2. Check that the containers are running:
 
    ```terminal
    docker compose --env-file .env.docker.secret ps --format "table {{.Service}}\t{{.Status}}"
    ```
 
-   You should see the base services running:
+   You should see the foundation services listed below:
 
    ```terminal
    SERVICE           STATUS
@@ -173,7 +160,7 @@ docker compose --env-file .env.docker.secret down
    > [!NOTE]
    > `client-web-react` exits after copying its build output — that's normal. Caddy serves the static files.
    >
-   > The observability services (VictoriaLogs, VictoriaTraces, OTel Collector) are part of the base system. You'll use them in Task 2.
+   > The observability services (VictoriaLogs, VictoriaTraces, OTel Collector) are part of the base system. You'll use them in Task 3.
 
    > [!TIP]
    > If you use `VS Code` Remote-SSH, forward port `42002` so `http://localhost:42002` opens in your local browser while the services keep running on the VM.
@@ -351,6 +338,9 @@ LLM_API_MODEL=meta-llama/llama-3.3-70b-instruct:free
 > [!NOTE]
 > You should already have a coding agent from previous labs.
 > If not, [set one up](../../wiki/coding-agents.md#choose-and-use-a-coding-agent).
+
+> [!TIP]
+> When stuck, ask your coding agent first, then ask the TA.
 
 In this lab, you will use the coding agent (Qwen Code) to help implement tasks. The agent is your development partner — but **make sure you understand what it builds**. Each task has checkpoints where you must verify the results manually.
 
