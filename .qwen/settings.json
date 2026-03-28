@@ -1,16 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(docker logs *)",
-      "Bash(docker run *)",
-      "Bash(docker compose *)",
-      "Bash(sleep *)",
-      "Bash(curl *)",
-      "Bash(mkdir *)",
-      "Bash(git submodule *)",
-      "Bash(uv *)",
-      "Bash(docker build *)",
-      "Bash(sudo *)"
+      "Bash(/home/lab3/.local/share/pnpm/qwen *)",
+      "Bash(touch *)",
+      "Bash(git show *)",
+      "Bash(rm *)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
     ]
   },
   "$version": 3

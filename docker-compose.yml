@@ -107,12 +107,13 @@ services:
     networks:
       - lms-network
     volumes:
-      # Mount config and entrypoint as read-only, workspace needs to be writable for nanobot
-      - ./nanobot/config.json:/app/nanobot/config.json:ro
-      - ./nanobot/entrypoint.py:/app/nanobot/entrypoint.py:ro
-      - ./nanobot/workspace:/app/nanobot/workspace
-      - ./mcp:/app/mcp:ro
-      - ./nanobot-websocket-channel:/app/nanobot-websocket-channel:ro
+      # Mount only the parts nanobot needs to edit or read from the repo.
+      - ./nanobot:/app/nanobot
+      - ./mcp:/app/mcp
+      - ./nanobot-websocket-channel:/app/nanobot-websocket-channel
+      - ./wiki:/app/wiki:ro
+      - ./lab:/app/lab:ro
+      - ./contributing:/app/contributing:ro
     environment:
       # Task 1 used VM-shell URLs. In Docker, use service-to-service URLs instead.
       - LLM_API_KEY=${LLM_API_KEY:?'LLM_API_KEY is required'}
@@ -138,17 +139,17 @@ services:
     depends_on:
       - backend
       - qwen-code-api
-  #     - otel-collector
+      - otel-collector
 
   # Task 2B — uncomment after you add nanobot-websocket-channel and want the Flutter build.
-  client-web-flutter:
-    build:
-      context: ./nanobot-websocket-channel/client-web-flutter
-      args:
-        REGISTRY_PREFIX_DOCKER_HUB: ${REGISTRY_PREFIX_DOCKER_HUB:-}
-        REGISTRY_PREFIX_GHCR: ${REGISTRY_PREFIX_GHCR:-}
-    volumes:
-      - client-web-flutter:/output
+  # client-web-flutter:
+  #   build:
+  #     context: ./nanobot-websocket-channel/client-web-flutter
+  #     args:
+  #       REGISTRY_PREFIX_DOCKER_HUB: ${REGISTRY_PREFIX_DOCKER_HUB:-}
+  #       REGISTRY_PREFIX_GHCR: ${REGISTRY_PREFIX_GHCR:-}
+  #   volumes:
+  #     - client-web-flutter:/output
 
   caddy:
     image: ${REGISTRY_PREFIX_DOCKER_HUB:-}caddy:2.11-alpine
@@ -158,7 +159,7 @@ services:
       - backend
       - client-web-react
       # Task 2B — uncomment after you enable the Flutter build service above.
-      - client-web-flutter
+      # - client-web-flutter
       # Task 2A — uncomment after you enable the nanobot service above.
       - nanobot
       - qwen-code-api
@@ -168,7 +169,7 @@ services:
       - CADDY_CONTAINER_PORT=${CADDY_CONTAINER_PORT:?'CADDY_CONTAINER_PORT is required'}
       - BACKEND_CONTAINER_PORT=${BACKEND_CONTAINER_PORT:?'BACKEND_CONTAINER_PORT is required'}
       # Task 2A — uncomment when you proxy /ws/chat to nanobot.
-      - NANOBOT_WEBCHAT_CONTAINER_PORT=${NANOBOT_WEBCHAT_CONTAINER_PORT:?'NANOBOT_WEBCHAT_CONTAINER_PORT is required'}
+      # - NANOBOT_WEBCHAT_CONTAINER_PORT=${NANOBOT_WEBCHAT_CONTAINER_PORT:?'NANOBOT_WEBCHAT_CONTAINER_PORT is required'}
       - QWEN_CODE_API_CONTAINER_PORT=${QWEN_CODE_API_CONTAINER_PORT:?'QWEN_CODE_API_CONTAINER_PORT is required'}
       - CONST_PGADMIN_CONTAINER_PORT=${CONST_PGADMIN_CONTAINER_PORT:?'CONST_PGADMIN_CONTAINER_PORT is required'}
       - CONST_VICTORIALOGS_CONTAINER_PORT=${CONST_VICTORIALOGS_CONTAINER_PORT:?'CONST_VICTORIALOGS_CONTAINER_PORT is required'}
@@ -179,7 +180,7 @@ services:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
       - client-web-react:/srv/react:ro
       # Task 2B — uncomment when you want Caddy to serve the Flutter build output.
-      - client-web-flutter:/srv/flutter:ro
+      # - client-web-flutter:/srv/flutter:ro
 
   qwen-code-api:
     build:
@@ -192,7 +193,7 @@ services:
     ports:
       - ${QWEN_CODE_API_HOST_ADDRESS:?'QWEN_CODE_API_HOST_ADDRESS is required'}:${QWEN_CODE_API_HOST_PORT:?'QWEN_CODE_API_HOST_PORT is required'}:${QWEN_CODE_API_CONTAINER_PORT:-8080}
     volumes:
-      - ~/.qwen:/mnt/qwen-creds:ro
+      - ~/.qwen:/mnt/qwen-creds
     environment:
       - PORT=${QWEN_CODE_API_CONTAINER_PORT:-8080}
       - ADDRESS=${QWEN_CODE_API_CONTAINER_ADDRESS:-0.0.0.0}

@@ -47,7 +47,6 @@ class ObsClient:
         Returns:
             List of log entries as dictionaries
         """
-        # VictoriaLogs query API: GET /select/logsql/query
         url = f"{self.victorialogs_url}/select/logsql/query"
         params = {
             "query": f"_time:{time_range} {query}",
@@ -72,7 +71,6 @@ class ObsClient:
         Returns:
             Dictionary mapping service names to error counts
         """
-        # Build query for errors
         if service:
             query = f'_time:{time_range} service.name:"{service}" severity:ERROR'
         else:
@@ -86,11 +84,9 @@ class ObsClient:
         response = await self._client.get(url, params=params)
         response.raise_for_status()
 
-        # Count errors by service
         logs = response.json()
         error_counts: dict[str, int] = {}
         for entry in logs:
-            # Extract service name from log entry
             labels = entry.get("labels", {})
             service_name = labels.get("service.name", "unknown")
             error_counts[service_name] = error_counts.get(service_name, 0) + 1
@@ -114,7 +110,6 @@ class ObsClient:
         Returns:
             List of trace summaries
         """
-        # VictoriaTraces Jaeger-compatible API: GET /select/jaeger/api/traces
         url = f"{self.victoriatraces_url}/select/jaeger/api/traces"
         params = {"limit": limit}
         if service:
@@ -124,7 +119,6 @@ class ObsClient:
         response.raise_for_status()
         data = response.json()
 
-        # Jaeger API returns {"data": [...]}
         if isinstance(data, dict) and "data" in data:
             return data["data"]
         return data if isinstance(data, list) else []
@@ -139,13 +133,11 @@ class ObsClient:
         Returns:
             Full trace data with spans
         """
-        # VictoriaTraces Jaeger-compatible API: GET /select/jaeger/api/traces/{traceID}
         url = f"{self.victoriatraces_url}/select/jaeger/api/traces/{trace_id}"
         response = await self._client.get(url)
         response.raise_for_status()
         data = response.json()
 
-        # Jaeger API returns {"data": [...]}
         if isinstance(data, dict) and "data" in data:
             traces = data["data"]
             return traces[0] if traces else {}

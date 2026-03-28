@@ -1,7 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(docker logs *)"
+      "Bash(/home/lab3/.local/share/pnpm/qwen *)"
     ]
   }
 }
