@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker logs *)",
+      "Bash(docker run *)",
+      "Bash(docker compose *)",
+      "Bash(sleep *)",
+      "Bash(curl *)",
+      "Bash(mkdir *)",
+      "Bash(git submodule *)",
+      "Bash(uv *)",
+      "Bash(docker build *)",
+      "Bash(sudo *)"
+    ]
+  },
+  "$version": 3
+}
